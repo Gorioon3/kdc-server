@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+          p:driverClassName="${jdbc.driver}"
+          p:url="${jdbc.url}"
+          p:username="${jdbc.user}"
+          p:password="${jdbc.password}"
+    >
+    </bean>
+
+
+    <bean id="appDao" class="com.gorio.acs.kdcserver.service.AppDAOImpl"
+          p:dataSource-ref="dataSource" scope="prototype"/>
+    <bean id="clientDao" class="com.gorio.acs.kdcserver.service.ClientDAOImpl"
+          p:dataSource-ref="dataSource" scope="prototype"/>
+    <bean id="serverDao" class="com.gorio.acs.kdcserver.service.ServerDAOImpl"
+          p:dataSource-ref="dataSource" scope="prototype"/>
+
+
+    <aop:aspectj-autoproxy/>
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!--app-->
+            <tx:method name="saveApp"/>
+            <tx:method name="deleteApp"/>
+            <tx:method name="updateApp"/>
+            <tx:method name="findApp"/>
+            <tx:method name="findAllApp"/>
+            <!--client-->
+            <tx:method name="saveNewClient"/>
+            <tx:method name="saveClient"/>
+            <tx:method name="deleteClient"/>
+            <tx:method name="updateClient"/>
+            <tx:method name="findClient"/>
+            <tx:method name="findAllClient"/>
+            <tx:method name="changeAllMasterSharedKey"/>
+            <tx:method name="updateAllClient"/>
+            <!--server-->
+            <tx:method name="saveServer"/>
+            <tx:method name="deleteServer"/>
+            <tx:method name="updateServer"/>
+            <tx:method name="findServer"/>
+            <tx:method name="findAllServer"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource"  ref="dataSource" />
+    </bean>
+
+</beans>
